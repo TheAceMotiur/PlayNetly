@@ -28,7 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
             if ($fileId) {
                 $uniqueCode = generateUniqueCode();
                 saveFileCode($fileId, $uniqueCode);
-                $_SESSION['download_link'] = "http://localhost/download.php?code=$uniqueCode";
+                $domain = $_SERVER['HTTP_HOST'];
+                $_SESSION['download_link'] = "http://$domain/download.php?code=$uniqueCode";
                 $_SESSION['success_message'] = "File uploaded successfully!";
                 header("Location: ../index.php");
                 exit();
@@ -145,6 +146,7 @@ function generateUniqueCode() {
 }
 
 function generateDownloadLink($fileId) {
-    return "http://localhost/download.php?id=" . urlencode($fileId);
+    $domain = $_SERVER['HTTP_HOST'];
+    return "http://$domain/download.php?id=" . urlencode($fileId);
 }
 ?>
