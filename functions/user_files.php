@@ -36,7 +36,7 @@ $result = $conn->query("SELECT * FROM files WHERE user_id = '$userId'");
                     <td class="py-2 px-4 border-b"><?php echo $file['file_size']; ?> bytes</td>
                     <td class="py-2 px-4 border-b"><?php echo $file['download_count']; ?></td>
                     <td class="py-2 px-4 border-b">
-                        <a href="../download.php?file_id=<?php echo $file['id']; ?>" class="text-blue-500">Download</a>
+                        <a href="/download.php?file_id=<?php echo $file['id']; ?>" class="text-blue-500">Download</a>
                         <a href="delete_file.php?id=<?php echo $file['id']; ?>" class="text-red-500">Delete</a>
                     </td>
                 </tr>
