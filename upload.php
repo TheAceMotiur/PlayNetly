@@ -13,7 +13,7 @@ try {
     }
 
     require_once 'config.php';
-    require_once '../vendor/autoload.php';
+    require_once 'vendor/autoload.php';
 
     // Initialize database connection
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
