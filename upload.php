@@ -12,7 +12,7 @@ try {
         throw new Exception('User not logged in.');
     }
 
-    require_once '../config.php';
+    require_once 'config.php';
     require_once '../vendor/autoload.php';
 
     // Initialize database connection
