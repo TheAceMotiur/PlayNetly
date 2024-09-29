@@ -76,7 +76,7 @@ function uploadToDropbox($filePath, $fileName, $fileSize) {
     }
 
     try {
-        $uploadResult = $dropbox->upload("/$fileName", $stream);
+        $uploadResult = $dropbox->upload("/$fileName", $stream, "overwrite");
     } catch (\Exception $e) {
         throw new Exception('Dropbox upload failed: ' . $e->getMessage());
     } finally {
@@ -119,10 +119,13 @@ function getDropboxAccountWithSpace($requiredSpace) {
     $accounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($accounts as $account) {
-        $dropbox = new DropboxClient($account['access_token']);
         try {
-            $spaceUsage = $dropbox->rpcEndpointRequest('users/get_space_usage');
+            $dropbox = new DropboxClient($account['access_token']);
+            $spaceUsage = $dropbox->getSpaceUsage();
+            
+            // The space usage is returned in bytes
             $availableSpace = $spaceUsage['allocation']['allocated'] - $spaceUsage['used'];
+            
             if ($availableSpace >= $requiredSpace) {
                 return $account;
             }
