@@ -121,7 +121,7 @@ function getDropboxAccountWithSpace($requiredSpace) {
     foreach ($accounts as $account) {
         $dropbox = new DropboxClient($account['access_token']);
         try {
-            $spaceUsage = $dropbox->getSpaceUsage();
+            $spaceUsage = $dropbox->rpcEndpointRequest('users/get_space_usage');
             $availableSpace = $spaceUsage['allocation']['allocated'] - $spaceUsage['used'];
             if ($availableSpace >= $requiredSpace) {
                 return $account;
