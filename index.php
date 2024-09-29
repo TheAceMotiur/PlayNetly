@@ -1,5 +1,10 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
 require_once 'config.php';
 
 // Check if user is logged in
@@ -138,10 +143,9 @@ if (isset($_SESSION['download_link'])) {
         var copyText = document.getElementById("downloadLink");
         copyText.select();
         copyText.setSelectionRange(0, 99999);
-        document.execCommand("copy");
-        
-        
-        Swal.fire({
+                document.execCommand("copy");
+                
+                Swal.fire({
                     title: 'Copied!',
                     text: 'Download link has been copied to clipboard.',
                     icon: 'success',
