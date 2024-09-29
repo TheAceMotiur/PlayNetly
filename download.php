@@ -1,6 +1,6 @@
 <?php
 require_once 'config.php';
-
+error_reporting(0);
 // Retrieve the 10-letter text code from the URL
 $code = $_GET['code'];
 
