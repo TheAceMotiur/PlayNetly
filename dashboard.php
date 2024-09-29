@@ -57,7 +57,7 @@ function formatSizeUnits($bytes) {
                         <td class="py-2 px-4 border-b"><?php echo formatSizeUnits($file['file_size']); ?></td>
                         <td class="py-2 px-4 border-b"><?php echo htmlspecialchars($file['download_count']); ?></td>
                         <td class="py-2 px-4 border-b">
-                        <a href="http://localhost/download.php?code=<?php echo urlencode($file['code']); ?>" class="text-blue-500">Download</a>
+                        <a href="/download.php?code=<?php echo urlencode($file['code']); ?>" class="text-blue-500">Download</a>
                             <a href="functions/delete_file.php?id=<?php echo urlencode($file['id']); ?>" class="text-red-500">Delete</a>
                         </td>
                     </tr>
