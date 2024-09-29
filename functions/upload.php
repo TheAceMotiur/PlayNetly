@@ -23,7 +23,19 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Invalid request method.');
+    }
+
+    // Check if it's a chunked upload
+    if (isset($_POST['chunkNumber'])) {
+        // This is a chunked upload, redirect to upload_chunk.php
+        require_once 'upload_chunk.php';
+        exit;
+    }
+
+    // Regular file upload
+    if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
         throw new Exception('Invalid file upload.');
     }
 
@@ -50,14 +62,17 @@ try {
 
     // Upload file to Dropbox
     $dropbox = new DropboxClient($accessToken);
-    $fileContent = file_get_contents($fileTmpPath);
-    if ($fileContent === false) {
-        throw new Exception('Failed to read file contents.');
+    
+    $stream = fopen($fileTmpPath, 'r');
+    if ($stream === false) {
+        throw new Exception('Failed to open file for reading.');
     }
 
     try {
-        $uploadResult = $dropbox->upload("/$fileName", $fileContent, 'add');
+        $uploadResult = $dropbox->upload("/$fileName", $stream);
+        fclose($stream);
     } catch (\Exception $e) {
+        fclose($stream);
         throw new Exception('Dropbox upload failed: ' . $e->getMessage());
     }
     
