@@ -165,8 +165,8 @@ function saveFileMetadata($fileName, $fileSize, $accountId) {
     return $pdo->lastInsertId();
 }
 
-function generateUniqueCode() {
-    return substr(md5(uniqid(mt_rand(), true)), 0, 10);
+function generateUniqueCode($length = 10) {
+    return bin2hex(random_bytes($length));
 }
 
 function saveFileCode($fileId, $code) {
