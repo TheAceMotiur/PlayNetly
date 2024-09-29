@@ -34,9 +34,9 @@ try {
 
     error_log("File upload initiated. File size: $fileSize bytes. File name: $fileName");
 
-    // Check file size (100MB limit)
-    if ($fileSize > 100 * 1024 * 1024) {
-        throw new Exception('File size exceeds the 100MB limit.');
+    // Check file size (1GB limit)
+    if ($fileSize > 1 * 1024 * 1024 * 1024) {
+        throw new Exception('File size exceeds the 1GB limit.');
     }
 
     // Get Dropbox account
