@@ -55,6 +55,20 @@ function handleUpload() {
 }
 
 function uploadToDropbox($filePath, $fileName, $fileSize) {
+
+    $downloadLink = "http://$domain/download.php?code=$uniqueCode";
+    if (!filter_var($downloadLink, FILTER_VALIDATE_URL)) {
+        throw new Exception('Invalid download link generated.');
+    }
+
+    $_SESSION['download_link'] = $downloadLink;
+
+    return [
+        'success' => true,
+        'message' => 'File uploaded successfully!',
+        'download_link' => $downloadLink
+    ];
+
     global $pdo;
 
     // Get Dropbox account with available space
