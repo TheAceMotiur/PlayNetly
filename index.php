@@ -87,6 +87,49 @@ session_start();
         });
     }
 
+    function uploadLargeFile(file) {
+  const chunkSize = 5 * 1024 * 1024; // 5MB chunks
+  const totalChunks = Math.ceil(file.size / chunkSize);
+  let currentChunk = 0;
+
+  function uploadNextChunk() {
+    const start = currentChunk * chunkSize;
+    const end = Math.min(file.size, start + chunkSize);
+    const chunk = file.slice(start, end);
+
+    const formData = new FormData();
+    formData.append('file', chunk, file.name);
+    formData.append('chunkNumber', currentChunk + 1);
+    formData.append('totalChunks', totalChunks);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'functions/upload.php', true);
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        if (response.success) {
+          currentChunk++;
+          if (currentChunk < totalChunks) {
+            uploadNextChunk();
+          } else {
+            alert('File uploaded successfully!');
+          }
+        } else {
+          alert('Upload failed: ' + response.message);
+        }
+      } else {
+        alert('An error occurred during upload.');
+      }
+    };
+    xhr.onerror = function() {
+      alert('An error occurred during upload.');
+    };
+    xhr.send(formData);
+  }
+
+  uploadNextChunk();
+}
+
     function viewDownloadLink() {
         var downloadLink = document.getElementById("downloadLink").value;
         window.open(downloadLink, '_blank');
