@@ -55,21 +55,20 @@ function handleUpload() {
 }
 
 function uploadToDropbox($filePath, $fileName, $fileSize) {
+    global $pdo;
 
+    // Generate unique code first
+    $uniqueCode = generateUniqueCode();
+    error_log("Generated unique code: " . $uniqueCode);
+
+    // Get domain
+    $domain = $_SERVER['HTTP_HOST'];
+
+    // Generate download link
     $downloadLink = "http://$domain/download.php?code=$uniqueCode";
     if (!filter_var($downloadLink, FILTER_VALIDATE_URL)) {
         throw new Exception('Invalid download link generated.');
     }
-
-    $_SESSION['download_link'] = $downloadLink;
-
-    return [
-        'success' => true,
-        'message' => 'File uploaded successfully!',
-        'download_link' => $downloadLink
-    ];
-
-    global $pdo;
 
     // Get Dropbox account with available space
     $account = getDropboxAccountWithSpace($fileSize);
@@ -107,17 +106,10 @@ function uploadToDropbox($filePath, $fileName, $fileSize) {
         throw new Exception('Error saving file metadata.');
     }
 
-    // Generate unique code and save
-    $uniqueCode = generateUniqueCode();
-    error_log("Generated unique code: " . $uniqueCode);
+    // Save file code
     saveFileCode($fileId, $uniqueCode);
 
-    // Generate download link
-    $domain = $_SERVER['HTTP_HOST'];
-    $downloadLink = "http://$domain/download.php?code=$uniqueCode";
-    if (!filter_var($downloadLink, FILTER_VALIDATE_URL)) {
-        throw new Exception('Invalid download link generated.');
-    }
+    $_SESSION['download_link'] = $downloadLink;
 
     return [
         'success' => true,
