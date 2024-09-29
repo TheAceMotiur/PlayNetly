@@ -2,8 +2,7 @@
 use Spatie\Dropbox\Client as DropboxClient;
 
 session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 header('Content-Type: application/json');
@@ -50,9 +49,11 @@ function handleChunkedUpload() {
     $fileName = $_FILES['file']['name'];
     $tmpName = $_FILES['file']['tmp_name'];
 
-    $uploadDir = '../uploads/'; // Make sure this directory exists and is writable
+    $uploadDir = '../uploads/';
     if (!file_exists($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
+        if (!mkdir($uploadDir, 0777, true)) {
+            throw new Exception('Failed to create upload directory.');
+        }
     }
 
     $chunkName = "{$fileName}.part{$chunkNumber}";
@@ -135,10 +136,12 @@ function uploadToDropbox($filePath, $fileName, $fileSize) {
 
     try {
         $uploadResult = $dropbox->upload("/$fileName", $stream);
-        fclose($stream);
     } catch (\Exception $e) {
-        fclose($stream);
         throw new Exception('Dropbox upload failed: ' . $e->getMessage());
+    } finally {
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
     }
     
     error_log("File uploaded successfully to Dropbox. Upload result: " . json_encode($uploadResult));
@@ -207,4 +210,3 @@ function saveFileCode($fileId, $code) {
         'file_id' => $fileId
     ]);
 }
-?>
