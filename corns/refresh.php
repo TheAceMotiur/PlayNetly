@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once '../config.php';
 
 function refreshDropboxAccessToken($accountId, $refreshToken, $clientId, $clientSecret) {
     $url = 'https://api.dropboxapi.com/oauth2/token';

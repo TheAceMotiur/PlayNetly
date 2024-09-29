@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php'; // Adjusted the path to 'config.php' assuming it's in the same directory
+require_once '../config.php'; // Adjusted the path to 'config.php' assuming it's in the same directory
 
 function removeFileFromDropbox($accessToken, $fileName) {
     $url = 'https://api.dropboxapi.com/2/files/delete_v2';
@@ -18,7 +18,7 @@ function removeFileFromDropbox($accessToken, $fileName) {
     return json_decode($response, true);
 }
 
-$xMinutes = 30; // Set the number of minutes after which files should be removed
+$xMinutes = 1; // Set the number of minutes after which files should be removed
 $expirationTime = date('Y-m-d H:i:s', strtotime("-$xMinutes minutes"));
 
 $query = "SELECT * FROM files WHERE last_download < '$expirationTime'";
