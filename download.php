@@ -96,20 +96,43 @@ if (isset($_GET['file_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download File</title>
+    <title>Download File - FilesWith</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        .bg-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 min-h-screen flex flex-col">
     <?php include 'header.php'; ?>
-    <div class="container mx-auto p-4 bg-white shadow-md rounded-lg mt-10">
-        <h1 class="text-3xl font-bold mb-4 text-blue-600">Download File</h1>
-        <div class="file-info mb-4">
-            <p class="mb-2"><strong>File Name:</strong> <?php echo htmlspecialchars($fileName); ?></p>
-            <p class="mb-2"><strong>File Size:</strong> <?php echo htmlspecialchars($fileSize); ?> bytes</p>
-            <p class="mb-2"><strong>Download Count:</strong> <?php echo htmlspecialchars($downloadCount); ?></p>
+    
+    <main class="flex-grow container mx-auto mt-8 p-4">
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800">Download File</h1>
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-file-alt text-blue-500 mr-2 text-xl"></i>
+                    <p class="font-semibold text-blue-700"><?php echo htmlspecialchars($fileName); ?></p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                    <div>
+                        <p><i class="fas fa-hdd mr-2"></i> <strong>File Size:</strong> <?php echo formatSizeUnits($fileSize); ?></p>
+                    </div>
+                    <div>
+                        <p><i class="fas fa-download mr-2"></i> <strong>Downloads:</strong> <?php echo htmlspecialchars($downloadCount); ?></p>
+                    </div>
+                </div>
+            </div>
+            <a href="download.php?code=<?php echo urlencode($code); ?>&file_id=<?php echo urlencode($fileId); ?>" 
+               class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg inline-flex items-center transition duration-300">
+                <i class="fas fa-download mr-2"></i>
+                Download File
+            </a>
         </div>
-        <a href="download.php?code=<?php echo urlencode($code); ?>&file_id=<?php echo urlencode($fileId); ?>" class="download-btn inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300">Download</a>
-    </div>
+    </main>
+
     <?php include 'footer.php'; ?>
 </body>
 </html>
