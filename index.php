@@ -14,14 +14,14 @@ $showDownloadSection = !empty($downloadLink);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OneNetly File Upload and Share</title>
+    <title>FilesWith File Upload and Share</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <header class="bg-blue-600 text-white p-4">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold">OneNetly</h1>
+            <h1 class="text-2xl font-bold">FilesWith</h1>
             <nav>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <a href="logout.php" class="text-white hover:text-blue-200">Logout</a>
@@ -85,7 +85,7 @@ $showDownloadSection = !empty($downloadLink);
 
     <footer class="bg-gray-800 text-white p-4 mt-8">
         <div class="container mx-auto text-center">
-            <p>&copy; 2024 OneNetly. All rights reserved.</p>
+            <p>&copy; 2024 FilesWith. All rights reserved.</p>
         </div>
     </footer>
 
