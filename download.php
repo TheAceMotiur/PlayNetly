@@ -1,6 +1,7 @@
 <?php
 require_once 'config.php';
 error_reporting(0);
+
 // Retrieve the 10-letter text code from the URL
 $code = $_GET['code'];
 
@@ -89,6 +90,23 @@ if (isset($_GET['file_id'])) {
         echo "File not found.";
         exit();
     }
+}
+
+function formatSizeUnits($bytes) {
+    if ($bytes >= 1073741824) {
+        $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+    } elseif ($bytes >= 1048576) {
+        $bytes = number_format($bytes / 1048576, 2) . ' MB';
+    } elseif ($bytes >= 1024) {
+        $bytes = number_format($bytes / 1024, 2) . ' KB';
+    } elseif ($bytes > 1) {
+        $bytes = $bytes . ' bytes';
+    } elseif ($bytes == 1) {
+        $bytes = $bytes . ' byte';
+    } else {
+        $bytes = '0 bytes';
+    }
+    return $bytes;
 }
 ?>
 <!DOCTYPE html>
