@@ -14,8 +14,18 @@ $userId = $_SESSION['user_id'];
 $userName = $_SESSION['user_name'];
 $userEmail = $_SESSION['user_email'];
 
-// Fetch user files
-$result = $conn->query("SELECT * FROM files WHERE user_id = '$userId' ORDER BY upload_time DESC");
+// Pagination
+$itemsPerPage = 10;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $itemsPerPage;
+
+// Fetch total number of files
+$totalResult = $conn->query("SELECT COUNT(*) as total FROM files WHERE user_id = '$userId'");
+$totalFiles = $totalResult->fetch_assoc()['total'];
+$totalPages = ceil($totalFiles / $itemsPerPage);
+
+// Fetch user files with pagination
+$result = $conn->query("SELECT * FROM files WHERE user_id = '$userId' ORDER BY upload_time DESC LIMIT $offset, $itemsPerPage");
 $files = $result->fetch_all(MYSQLI_ASSOC);
 
 // Function to convert bytes to megabytes
@@ -32,7 +42,6 @@ function formatSizeUnits($bytes) {
     <title>User Dashboard - FilesWith</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <header class="bg-blue-600 text-white p-4 shadow-md">
@@ -50,22 +59,15 @@ function formatSizeUnits($bytes) {
     </header>
 
     <main class="flex-grow container mx-auto mt-8 p-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-bold mb-4">Welcome, <?php echo htmlspecialchars($userName); ?>!</h2>
                 <p class="text-gray-600"><i class="fas fa-envelope mr-2"></i><?php echo htmlspecialchars($userEmail); ?></p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-bold mb-4">Storage Usage</h2>
-                <canvas id="storageChart"></canvas>
-            </div>
-            <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-bold mb-4">Quick Actions</h2>
-                <a href="#" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 inline-block mb-2">
+                <a href="index.php" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 inline-block mb-2">
                     <i class="fas fa-upload mr-2"></i>Upload New File
-                </a>
-                <a href="#" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300 inline-block">
-                    <i class="fas fa-folder-plus mr-2"></i>Create New Folder
                 </a>
             </div>
         </div>
@@ -83,7 +85,6 @@ function formatSizeUnits($bytes) {
                                 <th class="py-2 px-4 text-left">File Size</th>
                                 <th class="py-2 px-4 text-left">Upload Date</th>
                                 <th class="py-2 px-4 text-left">Download Count</th>
-                                <th class="py-2 px-4 text-left">Expiration</th>
                                 <th class="py-2 px-4 text-left">Last Download</th>
                                 <th class="py-2 px-4 text-left">Actions</th>
                             </tr>
@@ -95,15 +96,6 @@ function formatSizeUnits($bytes) {
                                 <td class="py-2 px-4"><?php echo formatSizeUnits($file['file_size']); ?></td>
                                 <td class="py-2 px-4"><?php echo date('M d, Y', strtotime($file['upload_time'])); ?></td>
                                 <td class="py-2 px-4"><?php echo htmlspecialchars($file['download_count']); ?></td>
-                                <td class="py-2 px-4">
-                                    <?php 
-                                    if ($file['expiration']) {
-                                        echo date('M d, Y', strtotime($file['expiration']));
-                                    } else {
-                                        echo 'No expiration';
-                                    }
-                                    ?>
-                                </td>
                                 <td class="py-2 px-4">
                                     <?php 
                                     if ($file['last_download']) {
@@ -129,6 +121,33 @@ function formatSizeUnits($bytes) {
                         </tbody>
                     </table>
                 </div>
+                
+                <!-- Pagination -->
+                <div class="mt-6 flex justify-center">
+                    <?php if ($totalPages > 1): ?>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                            <?php if ($page > 1): ?>
+                                <a href="?page=<?php echo $page - 1; ?>" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <span class="sr-only">Previous</span>
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            <?php endif; ?>
+                            
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <a href="?page=<?php echo $i; ?>" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium <?php echo $i === $page ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'; ?>">
+                                    <?php echo $i; ?>
+                                </a>
+                            <?php endfor; ?>
+                            
+                            <?php if ($page < $totalPages): ?>
+                                <a href="?page=<?php echo $page + 1; ?>" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <span class="sr-only">Next</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            <?php endif; ?>
+                        </nav>
+                    <?php endif; ?>
+                </div>
             <?php endif; ?>
         </div>
     </main>
@@ -137,3 +156,6 @@ function formatSizeUnits($bytes) {
         <div class="container mx-auto text-center">
             <p>&copy; 2024 FilesWith. All rights reserved.</p>
         </div>
+    </footer>
+</body>
+</html>
