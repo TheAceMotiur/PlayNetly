@@ -3,9 +3,9 @@
 $config = [
     'cleanup_interval_minutes' => 1,
     'db_host' => '207.244.240.126',
-    'db_user' => 'playnetl_y',
+    'db_user' => 'fileswith_com',
     'db_password' => 'AmiMotiur27@',
-    'db_name' => 'playnetl_y',
+    'db_name' => 'fileswith_com',
     'directory' => 'temp_downloads'
 ];
 
