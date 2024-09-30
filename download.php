@@ -86,7 +86,9 @@ if (isset($_GET['file_id'])) {
         $offset = 0;
         $length = $fileSize;
 
+        $isResume = false;
         if (isset($_SERVER['HTTP_RANGE'])) {
+            $isResume = true;
             // Figure out download piece from range (if set)
             list($param, $range) = explode('=', $_SERVER['HTTP_RANGE']);
             if (strtolower(trim($param)) == 'bytes') {
@@ -108,7 +110,7 @@ if (isset($_GET['file_id'])) {
         header("Content-Disposition: attachment; filename=\"$fileName\"");
         header("Content-Length: $length");
 
-        if (isset($_SERVER['HTTP_RANGE'])) {
+        if ($isResume) {
             header("HTTP/1.1 206 Partial Content");
             header("Content-Range: bytes $offset-" . ($offset + $length - 1) . "/$fileSize");
         }
@@ -125,6 +127,7 @@ if (isset($_GET['file_id'])) {
         $throttle = 1024 * 1024; // 1 MB per second
 
         $sentBytes = 0;
+        $downloadCompleted = false;
         while (!feof($fp) && ($sentBytes < $length)) {
             $readLength = min($buffer, $length - $sentBytes);
             $data = fread($fp, $readLength);
@@ -141,6 +144,10 @@ if (isset($_GET['file_id'])) {
                 }
                 $timer = microtime(true);
             }
+
+            if ($sentBytes >= $length) {
+                $downloadCompleted = true;
+            }
         }
 
         // Close the file
@@ -149,9 +156,24 @@ if (isset($_GET['file_id'])) {
         // Update last download timestamp, expiration timestamp, and download count
         $lastDownload = date('Y-m-d H:i:s');
         $expiration = date('Y-m-d H:i:s', strtotime('+7 days'));
-        $stmt = $conn->prepare("UPDATE files SET last_download = ?, expiration = ?, download_count = download_count + 1 WHERE id = ?");
-        $stmt->bind_param("sss", $lastDownload, $expiration, $fileId);
+
+        if ($downloadCompleted && !$isResume) {
+            // Increment download count only for completed, non-resumed downloads
+            $stmt = $conn->prepare("UPDATE files SET last_download = ?, expiration = ?, download_count = download_count + 1 WHERE id = ?");
+            $stmt->bind_param("sss", $lastDownload, $expiration, $fileId);
+        } else {
+            // Update timestamps without incrementing download count for resumed or incomplete downloads
+            $stmt = $conn->prepare("UPDATE files SET last_download = ?, expiration = ? WHERE id = ?");
+            $stmt->bind_param("sss", $lastDownload, $expiration, $fileId);
+        }
         $stmt->execute();
+
+        // Log the download attempt
+        $downloadStatus = $downloadCompleted ? 'completed' : 'incomplete';
+        $resumeStatus = $isResume ? 'resumed' : 'new';
+        $logStmt = $conn->prepare("INSERT INTO download_logs (file_id, download_status, resume_status, downloaded_bytes, timestamp) VALUES (?, ?, ?, ?, ?)");
+        $logStmt->bind_param("sssss", $fileId, $downloadStatus, $resumeStatus, $sentBytes, $lastDownload);
+        $logStmt->execute();
 
         exit();
     } else {
@@ -167,58 +189,58 @@ function formatSizeUnits($bytes) {
         $bytes = number_format($bytes / 1048576, 2) . ' MB';
     } elseif ($bytes >= 1024) {
         $bytes = number_format($bytes / 1024, 2) . ' KB';
-    } elseif ($bytes > 1) {
-        $bytes = $bytes . ' bytes';
-    } elseif ($bytes == 1) {
-        $bytes = $bytes . ' byte';
-    } else {
-        $bytes = '0 bytes';
-    }
-    return $bytes;
-}
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download File - FilesWith</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <style>
-        .bg-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }     elseif ($bytes > 1) {
+            $bytes = $bytes . ' bytes';
+        } elseif ($bytes == 1) {
+            $bytes = $bytes . ' byte';
+        } else {
+            $bytes = '0 bytes';
         }
-    </style>
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-    <?php include 'header.php'; ?>
-    
-    <main class="flex-grow container mx-auto mt-8 p-4">
-        <div class="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
-            <h1 class="text-3xl font-bold mb-6 text-gray-800">Download File</h1>
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
-                <div class="flex items-center mb-2">
-                    <i class="fas fa-file-alt text-blue-500 mr-2 text-xl"></i>
-                    <p class="font-semibold text-blue-700"><?php echo htmlspecialchars($fileName); ?></p>
-                </div>
-                <div class="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                    <div>
-                        <p><i class="fas fa-hdd mr-2"></i> <strong>File Size:</strong> <?php echo formatSizeUnits($fileSize); ?></p>
+        return $bytes;
+    }
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Download File - FilesWith</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+        <style>
+            .bg-gradient {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+        </style>
+    </head>
+    <body class="bg-gray-100 min-h-screen flex flex-col">
+        <?php include 'header.php'; ?>
+        
+        <main class="flex-grow container mx-auto mt-8 p-4">
+            <div class="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+                <h1 class="text-3xl font-bold mb-6 text-gray-800">Download File</h1>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-file-alt text-blue-500 mr-2 text-xl"></i>
+                        <p class="font-semibold text-blue-700"><?php echo htmlspecialchars($fileName); ?></p>
                     </div>
-                    <div>
-                        <p><i class="fas fa-download mr-2"></i> <strong>Downloads:</strong> <?php echo htmlspecialchars($downloadCount); ?></p>
+                    <div class="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                        <div>
+                            <p><i class="fas fa-hdd mr-2"></i> <strong>File Size:</strong> <?php echo formatSizeUnits($fileSize); ?></p>
+                        </div>
+                        <div>
+                            <p><i class="fas fa-download mr-2"></i> <strong>Downloads:</strong> <?php echo htmlspecialchars($downloadCount); ?></p>
+                        </div>
                     </div>
                 </div>
+                <a href="download.php?code=<?php echo urlencode($code); ?>&file_id=<?php echo urlencode($fileId); ?>" 
+                   class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg inline-flex items-center transition duration-300">
+                    <i class="fas fa-download mr-2"></i>
+                    Download File
+                </a>
             </div>
-            <a href="download.php?code=<?php echo urlencode($code); ?>&file_id=<?php echo urlencode($fileId); ?>" 
-               class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg inline-flex items-center transition duration-300">
-                <i class="fas fa-download mr-2"></i>
-                Download File
-            </a>
-        </div>
-    </main>
-
-    <?php include 'footer.php'; ?>
-</body>
-</html>
+        </main>
+    
+        <?php include 'footer.php'; ?>
+    </body>
+    </html>
