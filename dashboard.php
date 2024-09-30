@@ -15,7 +15,7 @@ $userName = $_SESSION['user_name'];
 $userEmail = $_SESSION['user_email'];
 
 // Fetch user files
-$result = $conn->query("SELECT * FROM files WHERE user_id = '$userId' ORDER BY upload_date DESC");
+$result = $conn->query("SELECT * FROM files WHERE user_id = '$userId' ORDER BY upload_time DESC");
 $files = $result->fetch_all(MYSQLI_ASSOC);
 
 // Function to convert bytes to megabytes
@@ -83,6 +83,8 @@ function formatSizeUnits($bytes) {
                                 <th class="py-2 px-4 text-left">File Size</th>
                                 <th class="py-2 px-4 text-left">Upload Date</th>
                                 <th class="py-2 px-4 text-left">Download Count</th>
+                                <th class="py-2 px-4 text-left">Expiration</th>
+                                <th class="py-2 px-4 text-left">Last Download</th>
                                 <th class="py-2 px-4 text-left">Actions</th>
                             </tr>
                         </thead>
@@ -91,8 +93,26 @@ function formatSizeUnits($bytes) {
                             <tr class="border-b hover:bg-gray-50">
                                 <td class="py-2 px-4"><?php echo htmlspecialchars($file['file_name']); ?></td>
                                 <td class="py-2 px-4"><?php echo formatSizeUnits($file['file_size']); ?></td>
-                                <td class="py-2 px-4"><?php echo date('M d, Y', strtotime($file['upload_date'])); ?></td>
+                                <td class="py-2 px-4"><?php echo date('M d, Y', strtotime($file['upload_time'])); ?></td>
                                 <td class="py-2 px-4"><?php echo htmlspecialchars($file['download_count']); ?></td>
+                                <td class="py-2 px-4">
+                                    <?php 
+                                    if ($file['expiration']) {
+                                        echo date('M d, Y', strtotime($file['expiration']));
+                                    } else {
+                                        echo 'No expiration';
+                                    }
+                                    ?>
+                                </td>
+                                <td class="py-2 px-4">
+                                    <?php 
+                                    if ($file['last_download']) {
+                                        echo date('M d, Y', strtotime($file['last_download']));
+                                    } else {
+                                        echo 'Never downloaded';
+                                    }
+                                    ?>
+                                </td>
                                 <td class="py-2 px-4">
                                     <a href="download.php?code=<?php echo urlencode($file['code']); ?>" class="text-blue-500 hover:text-blue-700 mr-2" title="Download">
                                         <i class="fas fa-download"></i>
@@ -117,31 +137,3 @@ function formatSizeUnits($bytes) {
         <div class="container mx-auto text-center">
             <p>&copy; 2024 FilesWith. All rights reserved.</p>
         </div>
-    </footer>
-    
-    <script>
-        // Sample data for the storage chart
-        var ctx = document.getElementById('storageChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Used', 'Free'],
-                datasets: [{
-                    data: [30, 70],
-                    backgroundColor: ['#4CAF50', '#E0E0E0'],
-                }]
-            },
-            options: {
-                responsive: true,
-                legend: {
-                    position: 'bottom',
-                },
-                title: {
-                    display: true,
-                    text: '30% Used'
-                }
-            }
-        });
-    </script>
-</body>
-</html>
