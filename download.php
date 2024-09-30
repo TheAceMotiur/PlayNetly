@@ -97,39 +97,18 @@ if (isset($_GET['file_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Download File</title>
-    <link href="/css/output.css" rel="stylesheet">
-    <style>
-        .download-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .download-btn:hover {
-            background-color: #0056b3;
-        }
-        .file-info {
-            margin-bottom: 20px;
-        }
-        .file-info p {
-            margin: 0;
-            padding: 5px 0;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
     <?php include 'header.php'; ?>
-    <div class="container">
-        <h1 class="text-3xl font-bold mb-4">Download File</h1>
-        <div class="file-info">
-            <p><strong>File Name:</strong> <?php echo htmlspecialchars($fileName); ?></p>
-            <p><strong>File Size:</strong> <?php echo htmlspecialchars($fileSize); ?> bytes</p>
-            <p><strong>Download Count:</strong> <?php echo htmlspecialchars($downloadCount); ?></p>
+    <div class="container mx-auto p-4 bg-white shadow-md rounded-lg mt-10">
+        <h1 class="text-3xl font-bold mb-4 text-blue-600">Download File</h1>
+        <div class="file-info mb-4">
+            <p class="mb-2"><strong>File Name:</strong> <?php echo htmlspecialchars($fileName); ?></p>
+            <p class="mb-2"><strong>File Size:</strong> <?php echo htmlspecialchars($fileSize); ?> bytes</p>
+            <p class="mb-2"><strong>Download Count:</strong> <?php echo htmlspecialchars($downloadCount); ?></p>
         </div>
-        <a href="download.php?code=<?php echo urlencode($code); ?>&file_id=<?php echo urlencode($fileId); ?>" class="download-btn">Download</a>
+        <a href="download.php?code=<?php echo urlencode($code); ?>&file_id=<?php echo urlencode($fileId); ?>" class="download-btn inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300">Download</a>
     </div>
     <?php include 'footer.php'; ?>
 </body>
