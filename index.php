@@ -4,11 +4,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Check if user is logged in (adjust this according to your authentication system)
-if (!isset($_SESSION['user_id'])) {
-    // Do not redirect to login page here, we will handle it in the HTML code
-}
-
 // Initialize variables
 $downloadLink = isset($_SESSION['download_link']) ? $_SESSION['download_link'] : '';
 $showDownloadSection = !empty($downloadLink);
@@ -19,55 +14,80 @@ $showDownloadSection = !empty($downloadLink);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Upload and Share</title>
+    <title>OneNetly File Upload and Share</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
-    <main class="container mx-auto mt-6 p-4">
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">OneNetly</h1>
+            <nav>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="logout.php" class="text-white hover:text-blue-200">Logout</a>
+                <?php else: ?>
+                    <a href="login.php" class="text-white hover:text-blue-200">Login</a>
+                <?php endif; ?>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto mt-8 p-4 flex-grow">
         <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
-            <h1 class="text-2xl font-bold mb-6">Upload and Share Files</h1>
+            <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Upload and Share Files</h2>
 
             <!-- File upload form -->
             <form id="uploadForm" enctype="multipart/form-data" class="mb-8">
                 <div class="mb-4">
                     <label for="fileInput" class="block text-gray-700 text-sm font-bold mb-2">Select File:</label>
-                    <input type="file" id="fileInput" name="file" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <div class="relative border-2 border-gray-300 border-dashed rounded-lg p-6 hover:border-blue-500 transition duration-300 ease-in-out">
+                        <input type="file" id="fileInput" name="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <div class="text-center">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-500">Drag and drop your file here or click to browse</p>
+                        </div>
+                    </div>
                 </div>
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <button type="button" onclick="uploadFile()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        Upload File
+                    <button type="button" onclick="uploadFile()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
+                        <i class="fas fa-upload mr-2"></i> Upload File
                     </button>
                 <?php else: ?>
-                    <a href="login.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        Login to upload
+                    <a href="login.php" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out inline-block text-center">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Login to Upload
                     </a>
                 <?php endif; ?>
             </form>
 
             <!-- Progress bar (hidden by default) -->
             <div id="progressContainer" class="hidden mb-4">
-                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                    <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div id="progressBar" class="bg-blue-600 h-4 rounded-full transition-all duration-300 ease-in-out" style="width: 0%"></div>
                 </div>
-                <p id="progressText" class="text-sm text-gray-600 mt-1">0%</p>
+                <p id="progressText" class="text-sm text-gray-600 mt-2 text-center">0%</p>
             </div>
 
             <!-- Download section -->
-            <div id="downloadSection" class="<?php echo $showDownloadSection ? '' : 'hidden'; ?> mt-4 bg-white p-4 rounded-lg shadow-md">
-                <p class="mb-2 font-semibold text-gray-700">Download Link:</p>
+            <div id="downloadSection" class="<?php echo $showDownloadSection ? '' : 'hidden'; ?> mt-8 bg-gray-100 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">Download Link</h3>
                 <div class="flex items-center">
-                    <input type="text" id="downloadLink" value="<?php echo htmlspecialchars($downloadLink); ?>" readonly class="flex-grow p-2 border rounded-l-lg bg-gray-100 text-gray-800" />
-                    <button onclick="copyToClipboard()" class="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 transition duration-300 flex items-center" aria-label="Copy download link">
-                        Copy
+                    <input type="text" id="downloadLink" value="<?php echo htmlspecialchars($downloadLink); ?>" readonly class="flex-grow p-3 border rounded-l-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="copyToClipboard()" class="bg-blue-500 text-white px-4 py-3 hover:bg-blue-600 transition duration-300 ease-in-out" aria-label="Copy download link">
+                        <i class="fas fa-copy"></i>
                     </button>
-                    <button onclick="viewDownloadLink()" class="bg-green-500 text-white px-4 py-2 rounded-r-lg hover:bg-green-600 transition duration-300 flex items-center" aria-label="View download link">
-                        View
+                    <button onclick="viewDownloadLink()" class="bg-green-500 text-white px-4 py-3 rounded-r-lg hover:bg-green-600 transition duration-300 ease-in-out" aria-label="View download link">
+                        <i class="fas fa-external-link-alt"></i>
                     </button>
                 </div>
             </div>
         </div>
     </main>
 
+    <footer class="bg-gray-800 text-white p-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 OneNetly. All rights reserved.</p>
+        </div>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function uploadFile() {
