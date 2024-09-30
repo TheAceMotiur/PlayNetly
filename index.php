@@ -38,26 +38,26 @@ $showDownloadSection = !empty($downloadLink);
 
             <!-- File upload form -->
             <form id="uploadForm" enctype="multipart/form-data" class="mb-8">
-    <div class="mb-4">
-        <label for="fileInput" class="block text-gray-700 text-sm font-bold mb-2">Select File:</label>
-        <div class="relative border-2 border-gray-300 border-dashed rounded-lg p-6 hover:border-blue-500 transition duration-300 ease-in-out">
-            <input type="file" id="fileInput" name="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="updateFileName()">
-            <div class="text-center">
-                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
-                <p id="fileNameDisplay" class="text-gray-500">Drag and drop your file here or click to browse</p>
-            </div>
-        </div>
-    </div>
-    <?php if (isset($_SESSION['user_id'])): ?>
-        <button type="button" onclick="uploadFile()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
-            <i class="fas fa-upload mr-2"></i> Upload File
-        </button>
-    <?php else: ?>
-        <a href="login.php" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out inline-block text-center">
-            <i class="fas fa-sign-in-alt mr-2"></i> Login to Upload
-        </a>
-    <?php endif; ?>
-</form>
+                <div class="mb-4">
+                    <label for="fileInput" class="block text-gray-700 text-sm font-bold mb-2">Select File:</label>
+                    <div class="relative border-2 border-gray-300 border-dashed rounded-lg p-6 hover:border-blue-500 transition duration-300 ease-in-out">
+                        <input type="file" id="fileInput" name="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="updateFileName()">
+                        <div class="text-center">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                            <p id="fileNameDisplay" class="text-gray-500">Drag and drop your file here or click to browse</p>
+                        </div>
+                    </div>
+                </div>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <button type="button" onclick="uploadFile()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
+                        <i class="fas fa-upload mr-2"></i> Upload File
+                    </button>
+                <?php else: ?>
+                    <a href="login.php" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out inline-block text-center">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Login to Upload
+                    </a>
+                <?php endif; ?>
+            </form>
 
             <!-- Progress bar (hidden by default) -->
             <div id="progressContainer" class="hidden mb-4">
@@ -88,15 +88,28 @@ $showDownloadSection = !empty($downloadLink);
             <p>&copy; 2024 OneNetly. All rights reserved.</p>
         </div>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function uploadFile() {
-        const fileInput = document.getElementById('fileInput');
-        const file = fileInput.files[0];
-        if (!file) {
-            Swal.fire('Error', 'Please select a file first.', 'error');
-            return;
+        function updateFileName() {
+            const fileInput = document.getElementById('fileInput');
+            const fileNameDisplay = document.getElementById('fileNameDisplay');
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = `Selected file: ${fileInput.files[0].name}`;
+                fileNameDisplay.classList.add('font-semibold', 'text-blue-600');
+            } else {
+                fileNameDisplay.textContent = 'Drag and drop your file here or click to browse';
+                fileNameDisplay.classList.remove('font-semibold', 'text-blue-600');
+            }
         }
+
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                Swal.fire('Error', 'Please select a file first.', 'error');
+                return;
+            }
 
             const formData = new FormData();
             formData.append('file', file);
@@ -118,57 +131,57 @@ $showDownloadSection = !empty($downloadLink);
                 if (xhr.status === 200) {
                     try {
                         const response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                            Swal.fire('Success', response.message, 'success');
-                            if (response.download_link) {
-                                document.getElementById('downloadLink').value = response.download_link;
-                                document.getElementById('downloadSection').classList.remove('hidden');
-                            }
-                        } else {
-                            throw new Error(response.message || 'Upload failed');
+                                        if (response.success) {
+                                            Swal.fire('Success', response.message, 'success');
+                                            if (response.download_link) {
+                                                document.getElementById('downloadLink').value = response.download_link;
+                                                document.getElementById('downloadSection').classList.remove('hidden');
+                                            }
+                                        } else {
+                                            throw new Error(response.message || 'Upload failed');
+                                        }
+                                    } catch (error) {
+                                        console.error('Error parsing response:', xhr.responseText);
+                                        Swal.fire('Error', 'An error occurred during upload: ' + error.message, 'error');
+                                    }
+                                } else {
+                                    Swal.fire('Error', 'Server responded with status ' + xhr.status, 'error');
+                                }
+                            };
+                
+                            xhr.onerror = function() {
+                                console.error('Error:', xhr.statusText);
+                                Swal.fire('Error', 'An error occurred during upload: ' + xhr.statusText, 'error');
+                            };
+                
+                            xhr.send(formData);
                         }
-                    } catch (error) {
-                        console.error('Error parsing response:', xhr.responseText);
-                        Swal.fire('Error', 'An error occurred during upload: ' + error.message, 'error');
-                    }
-                } else {
-                    Swal.fire('Error', 'Server responded with status ' + xhr.status, 'error');
-                }
-            };
-
-            xhr.onerror = function() {
-                console.error('Error:', xhr.statusText);
-                Swal.fire('Error', 'An error occurred during upload: ' + xhr.statusText, 'error');
-            };
-
-            xhr.send(formData);
-        }
-
-        function updateProgress(percent) {
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
-            progressBar.style.width = percent + '%';
-            progressText.textContent = Math.round(percent) + '%';
-        }
-
-        function copyToClipboard() {
-            var copyText = document.getElementById("downloadLink");
-            copyText.select();
-            copyText.setSelectionRange(0, 99999);
-            document.execCommand("copy");
-            
-            Swal.fire({
-                title: 'Copied!',
-                text: 'Download link has been copied to clipboard.',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        }
-
-        function viewDownloadLink() {
-            var downloadLink = document.getElementById("downloadLink").value;
-            window.open(downloadLink, '_blank');
-        }
-    </script>
-</body>
-</html>
+                
+                        function updateProgress(percent) {
+                            const progressBar = document.getElementById('progressBar');
+                            const progressText = document.getElementById('progressText');
+                            progressBar.style.width = percent + '%';
+                            progressText.textContent = Math.round(percent) + '%';
+                        }
+                
+                        function copyToClipboard() {
+                            var copyText = document.getElementById("downloadLink");
+                            copyText.select();
+                            copyText.setSelectionRange(0, 99999);
+                            document.execCommand("copy");
+                            
+                            Swal.fire({
+                                title: 'Copied!',
+                                text: 'Download link has been copied to clipboard.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                
+                        function viewDownloadLink() {
+                            var downloadLink = document.getElementById("downloadLink").value;
+                            window.open(downloadLink, '_blank');
+                        }
+                    </script>
+                </body>
+                </html>
