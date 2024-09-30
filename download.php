@@ -81,6 +81,71 @@ if (isset($_GET['file_id'])) {
             }
         }
 
+        // File download with resume support
+        $fileSize = filesize($filePath);
+        $offset = 0;
+        $length = $fileSize;
+
+        if (isset($_SERVER['HTTP_RANGE'])) {
+            // Figure out download piece from range (if set)
+            list($param, $range) = explode('=', $_SERVER['HTTP_RANGE']);
+            if (strtolower(trim($param)) == 'bytes') {
+                list($from, $to) = explode('-', $range);
+                $offset = intval($from);
+                $length = $fileSize - $offset;
+                if (strpos($range, '-') !== false) {
+                    $to = intval($to);
+                    if ($to > 0) {
+                        $length = $to - $offset + 1;
+                    }
+                }
+            }
+        }
+
+        // Headers for resume support and speed download
+        header("Accept-Ranges: bytes");
+        header("Content-Type: application/octet-stream");
+        header("Content-Disposition: attachment; filename=\"$fileName\"");
+        header("Content-Length: $length");
+
+        if (isset($_SERVER['HTTP_RANGE'])) {
+            header("HTTP/1.1 206 Partial Content");
+            header("Content-Range: bytes $offset-" . ($offset + $length - 1) . "/$fileSize");
+        }
+
+        // Open the file
+        $fp = fopen($filePath, 'rb');
+
+        // Seek to the requested offset
+        fseek($fp, $offset);
+
+        // Start buffered download
+        $buffer = 8192;
+        $timer = microtime(true);
+        $throttle = 1024 * 1024; // 1 MB per second
+
+        $sentBytes = 0;
+        while (!feof($fp) && ($sentBytes < $length)) {
+            $readLength = min($buffer, $length - $sentBytes);
+            $data = fread($fp, $readLength);
+            $sentBytes += strlen($data);
+
+            echo $data;
+            flush();
+
+            // Throttle speed
+            if ($sentBytes % $throttle == 0) {
+                $elapsedTime = microtime(true) - $timer;
+                if ($elapsedTime < 1) {
+                    usleep((1 - $elapsedTime) * 1000000);
+                }
+                $timer = microtime(true);
+            }
+        }
+
+        // Close the file
+        fclose($fp);
+
         // Update last download timestamp, expiration timestamp, and download count
         $lastDownload = date('Y-m-d H:i:s');
         $expiration = date('Y-m-d H:i:s', strtotime('+7 days'));
@@ -88,15 +153,6 @@ if (isset($_GET['file_id'])) {
         $stmt->bind_param("sss", $lastDownload, $expiration, $fileId);
         $stmt->execute();
 
-        // Determine the MIME type of the file
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mimeType = finfo_file($finfo, $filePath);
-        finfo_close($finfo);
-
-        // Serve the file to the user
-        header('Content-Type: ' . $mimeType);
-        header('Content-Disposition: attachment; filename="' . $fileName . '"');
-        readfile($filePath);
         exit();
     } else {
         echo "File not found.";
