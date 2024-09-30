@@ -1,7 +1,7 @@
 <?php
 // Configuration
 $config = [
-    'cleanup_interval_minutes' => 1,
+    'cleanup_interval_minutes' => 60,
     'db_host' => '207.244.240.126',
     'db_user' => 'fileswith_com',
     'db_password' => 'AmiMotiur27@',
