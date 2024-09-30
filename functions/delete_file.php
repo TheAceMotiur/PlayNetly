@@ -18,6 +18,7 @@ if ($file) {
     $accessToken = $account['access_token'];
     $fileName = $file['file_name'];
 
+    // Delete from Dropbox
     $url = 'https://api.dropboxapi.com/2/files/delete_v2';
     $headers = [
         "Authorization: Bearer $accessToken",
@@ -32,8 +33,16 @@ if ($file) {
     $response = curl_exec($ch);
     curl_close($ch);
 
+    // Delete from temp_downloads folder
+    $tempFilePath = "../temp_downloads/$fileName";
+    if (file_exists($tempFilePath)) {
+        unlink($tempFilePath);
+    }
+
+    // Delete from database
     $conn->query("DELETE FROM files WHERE id = '$fileId'");
-    header("Location: ../user_files.php");
+
+    header("Location: /dashboard.php");
     exit();
 } else {
     echo "File not found.";
