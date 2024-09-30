@@ -10,9 +10,5 @@
     <a href="https://onenetly.com/api/oauth?app_id=8746867909080">
         <button>Log in With OneNetly</button>
     </a>
-
-    <a href="https://onenetly.com/api/oauth?app_id=149697232994196">
-        <button>Log in With OneNetly 2</button>
-    </a>
 </body>
 </html>
