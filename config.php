@@ -1,8 +1,8 @@
 <?php
 $host = "207.244.240.126";
-$username = "playnetl_y";
+$username = "fileswith_com";
 $password = "AmiMotiur27@";
-$dbname = "playnetl_y";
+$dbname = "fileswith_com";
 
 // Create connection
 $conn = new mysqli($host, $username, $password, $dbname);
