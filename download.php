@@ -34,58 +34,70 @@ if (isset($_GET['file_id'])) {
     $file = $result->fetch_assoc();
 
     if ($file) {
-        $accountId = $file['account_id'];
-        $accountStmt = $conn->prepare("SELECT * FROM dropbox_accounts WHERE id = ?");
-        $accountStmt->bind_param("s", $accountId);
-        $accountStmt->execute();
-        $accountResult = $accountStmt->get_result();
-        $account = $accountResult->fetch_assoc();
+        $fileName = basename($file['file_name']); // Prevent path traversal
+        $filePath = "temp_downloads/$fileName";
+        $needToDownload = true;
 
-        if ($account) {
-            $accessToken = $account['access_token'];
-            $fileName = basename($file['file_name']); // Prevent path traversal
-            $url = 'https://content.dropboxapi.com/2/files/download';
-            $headers = [
-                "Authorization: Bearer $accessToken",
-                "Dropbox-API-Arg: " . json_encode(["path" => "/$fileName"])
-            ];
+        // Check if the file exists in temp_downloads and is less than 7 days old
+        if (file_exists($filePath)) {
+            $fileAge = time() - filemtime($filePath);
+            if ($fileAge < 7 * 24 * 60 * 60) { // 7 days in seconds
+                $needToDownload = false;
+            }
+        }
 
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $response = curl_exec($ch);
-            if (curl_errno($ch)) {
-                echo 'Curl error: ' . curl_error($ch);
+        if ($needToDownload) {
+            $accountId = $file['account_id'];
+            $accountStmt = $conn->prepare("SELECT * FROM dropbox_accounts WHERE id = ?");
+            $accountStmt->bind_param("s", $accountId);
+            $accountStmt->execute();
+            $accountResult = $accountStmt->get_result();
+            $account = $accountResult->fetch_assoc();
+
+            if ($account) {
+                $accessToken = $account['access_token'];
+                $url = 'https://content.dropboxapi.com/2/files/download';
+                $headers = [
+                    "Authorization: Bearer $accessToken",
+                    "Dropbox-API-Arg: " . json_encode(["path" => "/$fileName"])
+                ];
+
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $response = curl_exec($ch);
+                if (curl_errno($ch)) {
+                    echo 'Curl error: ' . curl_error($ch);
+                    curl_close($ch);
+                    exit();
+                }
                 curl_close($ch);
+
+                // Save the file to the server
+                file_put_contents($filePath, $response);
+            } else {
+                echo "Account not found.";
                 exit();
             }
-            curl_close($ch);
-
-            // Save the file to the server
-            $filePath = "temp_downloads/$fileName";
-            file_put_contents($filePath, $response);
-
-            // Update last download timestamp, expiration timestamp, and download count
-            $lastDownload = date('Y-m-d H:i:s');
-            $expiration = date('Y-m-d H:i:s', strtotime('+7 days'));
-            $stmt = $conn->prepare("UPDATE files SET last_download = ?, expiration = ?, download_count = download_count + 1 WHERE id = ?");
-            $stmt->bind_param("sss", $lastDownload, $expiration, $fileId);
-            $stmt->execute();
-
-            // Determine the MIME type of the file
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mimeType = finfo_file($finfo, $filePath);
-            finfo_close($finfo);
-
-            // Serve the file to the user
-            header('Content-Type: ' . $mimeType);
-            header('Content-Disposition: attachment; filename="' . $fileName . '"');
-            readfile($filePath);
-            exit();
-        } else {
-            echo "Account not found.";
-            exit();
         }
+
+        // Update last download timestamp, expiration timestamp, and download count
+        $lastDownload = date('Y-m-d H:i:s');
+        $expiration = date('Y-m-d H:i:s', strtotime('+7 days'));
+        $stmt = $conn->prepare("UPDATE files SET last_download = ?, expiration = ?, download_count = download_count + 1 WHERE id = ?");
+        $stmt->bind_param("sss", $lastDownload, $expiration, $fileId);
+        $stmt->execute();
+
+        // Determine the MIME type of the file
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $filePath);
+        finfo_close($finfo);
+
+        // Serve the file to the user
+        header('Content-Type: ' . $mimeType);
+        header('Content-Disposition: attachment; filename="' . $fileName . '"');
+        readfile($filePath);
+        exit();
     } else {
         echo "File not found.";
         exit();
