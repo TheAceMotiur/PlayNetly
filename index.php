@@ -38,26 +38,26 @@ $showDownloadSection = !empty($downloadLink);
 
             <!-- File upload form -->
             <form id="uploadForm" enctype="multipart/form-data" class="mb-8">
-                <div class="mb-4">
-                    <label for="fileInput" class="block text-gray-700 text-sm font-bold mb-2">Select File:</label>
-                    <div class="relative border-2 border-gray-300 border-dashed rounded-lg p-6 hover:border-blue-500 transition duration-300 ease-in-out">
-                        <input type="file" id="fileInput" name="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                        <div class="text-center">
-                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
-                            <p class="text-gray-500">Drag and drop your file here or click to browse</p>
-                        </div>
-                    </div>
-                </div>
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <button type="button" onclick="uploadFile()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
-                        <i class="fas fa-upload mr-2"></i> Upload File
-                    </button>
-                <?php else: ?>
-                    <a href="login.php" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out inline-block text-center">
-                        <i class="fas fa-sign-in-alt mr-2"></i> Login to Upload
-                    </a>
-                <?php endif; ?>
-            </form>
+    <div class="mb-4">
+        <label for="fileInput" class="block text-gray-700 text-sm font-bold mb-2">Select File:</label>
+        <div class="relative border-2 border-gray-300 border-dashed rounded-lg p-6 hover:border-blue-500 transition duration-300 ease-in-out">
+            <input type="file" id="fileInput" name="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="updateFileName()">
+            <div class="text-center">
+                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                <p id="fileNameDisplay" class="text-gray-500">Drag and drop your file here or click to browse</p>
+            </div>
+        </div>
+    </div>
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <button type="button" onclick="uploadFile()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
+            <i class="fas fa-upload mr-2"></i> Upload File
+        </button>
+    <?php else: ?>
+        <a href="login.php" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out inline-block text-center">
+            <i class="fas fa-sign-in-alt mr-2"></i> Login to Upload
+        </a>
+    <?php endif; ?>
+</form>
 
             <!-- Progress bar (hidden by default) -->
             <div id="progressContainer" class="hidden mb-4">
@@ -91,12 +91,12 @@ $showDownloadSection = !empty($downloadLink);
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function uploadFile() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            if (!file) {
-                Swal.fire('Error', 'Please select a file first.', 'error');
-                return;
-            }
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+        if (!file) {
+            Swal.fire('Error', 'Please select a file first.', 'error');
+            return;
+        }
 
             const formData = new FormData();
             formData.append('file', file);
