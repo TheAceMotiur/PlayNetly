@@ -42,7 +42,7 @@ if (isset($_SESSION['user_id'])) {
 
             <div class="mt-8 border-t pt-6 text-center">
                 <p class="text-gray-600">Don't have a OneNetly account?</p>
-                <a href="https://onenetly.com/signup" class="font-bold text-blue-500 hover:text-blue-800">
+                <a href="https://onenetly.com/signup" "_blank" class="font-bold text-blue-500 hover:text-blue-800">
                     Sign up for OneNetly
                 </a>
             </div>
