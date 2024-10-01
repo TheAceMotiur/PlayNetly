@@ -59,21 +59,21 @@ function formatSizeUnits($bytes) {
     </header>
 
 <main class="flex-grow container mx-auto mt-8 p-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
             <h2 class="text-xl font-bold mb-4">Welcome, <?php echo htmlspecialchars($userName); ?>!</h2>
-            <p class="text-gray-600"><i class="fas fa-envelope mr-2"></i><?php echo htmlspecialchars($userEmail); ?></p>
+            <p class="text-gray-600 text-sm sm:text-base"><i class="fas fa-envelope mr-2"></i><?php echo htmlspecialchars($userEmail); ?></p>
         </div>
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
             <h2 class="text-xl font-bold mb-4">Quick Actions</h2>
-            <a href="index.php" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 inline-block mb-2">
+            <a href="index.php" class="bg-blue-500 text-white px-3 py-2 sm:px-4 sm:py-2 rounded hover:bg-blue-600 transition duration-300 inline-block mb-2 text-sm sm:text-base">
                 <i class="fas fa-upload mr-2"></i>Upload New File
             </a>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-2xl font-bold mb-4">Your Files</h2>
+    <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+        <h2 class="text-xl sm:text-2xl font-bold mb-4">Your Files</h2>
         <?php if (empty($files)): ?>
             <p class="text-gray-600">You haven't uploaded any files yet.</p>
         <?php else: ?>
@@ -81,21 +81,21 @@ function formatSizeUnits($bytes) {
                 <table class="min-w-full bg-white">
                     <thead class="bg-gray-100">
                         <tr>
-                            <th class="py-2 px-4 text-left">File Name</th>
-                            <th class="py-2 px-4 text-left">File Size</th>
-                            <th class="py-2 px-4 text-left">Date</th>
-                            <th class="py-2 px-4 text-left">Downloads</th>
-                            <th class="py-2 px-4 text-left">Actions</th>
+                            <th class="py-2 px-2 sm:px-4 text-left text-xs sm:text-sm">File Name</th>
+                            <th class="py-2 px-2 sm:px-4 text-left text-xs sm:text-sm">File Size</th>
+                            <th class="py-2 px-2 sm:px-4 text-left text-xs sm:text-sm">Date</th>
+                            <th class="py-2 px-2 sm:px-4 text-left text-xs sm:text-sm">Downloads</th>
+                            <th class="py-2 px-2 sm:px-4 text-left text-xs sm:text-sm">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($files as $file): ?>
                         <tr class="border-b hover:bg-gray-50">
-                            <td class="py-2 px-4"><?php echo htmlspecialchars($file['file_name']); ?></td>
-                            <td class="py-2 px-4"><?php echo formatSizeUnits($file['file_size']); ?></td>
-                            <td class="py-2 px-4"><?php echo date('M d, Y', strtotime($file['upload_time'])); ?></td>
-                            <td class="py-2 px-4"><?php echo htmlspecialchars($file['download_count']); ?></td>
-                            <td class="py-2 px-4">
+                            <td class="py-2 px-2 sm:px-4 text-xs sm:text-sm"><?php echo htmlspecialchars($file['file_name']); ?></td>
+                            <td class="py-2 px-2 sm:px-4 text-xs sm:text-sm"><?php echo formatSizeUnits($file['file_size']); ?></td>
+                            <td class="py-2 px-2 sm:px-4 text-xs sm:text-sm"><?php echo date('M d, Y', strtotime($file['upload_time'])); ?></td>
+                            <td class="py-2 px-2 sm:px-4 text-xs sm:text-sm"><?php echo htmlspecialchars($file['download_count']); ?></td>
+                            <td class="py-2 px-2 sm:px-4 text-xs sm:text-sm">
                                 <a href="download.php?code=<?php echo urlencode($file['code']); ?>" class="text-blue-500 hover:text-blue-700 mr-2" title="Download">
                                     <i class="fas fa-download"></i>
                                 </a>
@@ -124,7 +124,7 @@ function formatSizeUnits($bytes) {
                         <?php endif; ?>
                         
                         <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                            <a href="?page=<?php echo $i; ?>" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium <?php echo $i === $page ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'; ?>">
+                            <a href="?page=<?php echo $i; ?>" class="relative inline-flex items-center px-2 sm:px-4 py-2 border border-gray-300 bg-white text-xs sm:text-sm font-medium <?php echo $i === $page ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'; ?>">
                                 <?php echo $i; ?>
                             </a>
                         <?php endfor; ?>
