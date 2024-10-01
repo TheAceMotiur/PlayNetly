@@ -19,18 +19,25 @@ $showDownloadSection = !empty($downloadLink);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
-    <header class="bg-blue-600 text-white p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold">FilesWith</h1>
-            <nav>
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="logout.php" class="text-white hover:text-blue-200">Logout</a>
-                <?php else: ?>
-                    <a href="login.php" class="text-white hover:text-blue-200">Login</a>
-                <?php endif; ?>
-            </nav>
-        </div>
-    </header>
+<header class="bg-blue-600 text-white p-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">FilesWith</h1>
+        <nav>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="dashboard.php" class="text-white hover:text-blue-200 mr-4">
+                    <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+                </a>
+                <a href="logout.php" class="text-white hover:text-blue-200">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                </a>
+            <?php else: ?>
+                <a href="login.php" class="text-white hover:text-blue-200">
+                    <i class="fas fa-lock mr-2"></i> Login
+                </a>
+            <?php endif; ?>
+        </nav>
+    </div>
+</header>
 
     <main class="container mx-auto mt-8 p-4 flex-grow">
         <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
