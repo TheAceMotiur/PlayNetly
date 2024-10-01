@@ -71,7 +71,7 @@ function formatSizeUnits($bytes) {
                 </a>
             </div>
         </div>
-
+    
         <div class="bg-white rounded-lg shadow-md p-6">
             <h2 class="text-2xl font-bold mb-4">Your Files</h2>
             <?php if (empty($files)): ?>
@@ -85,7 +85,6 @@ function formatSizeUnits($bytes) {
                                 <th class="py-2 px-4 text-left">File Size</th>
                                 <th class="py-2 px-4 text-left">Upload Date</th>
                                 <th class="py-2 px-4 text-left">Download Count</th>
-                                <th class="py-2 px-4 text-left">Last Download</th>
                                 <th class="py-2 px-4 text-left">Actions</th>
                             </tr>
                         </thead>
@@ -96,15 +95,6 @@ function formatSizeUnits($bytes) {
                                 <td class="py-2 px-4"><?php echo formatSizeUnits($file['file_size']); ?></td>
                                 <td class="py-2 px-4"><?php echo date('M d, Y', strtotime($file['upload_time'])); ?></td>
                                 <td class="py-2 px-4"><?php echo htmlspecialchars($file['download_count']); ?></td>
-                                <td class="py-2 px-4">
-                                    <?php 
-                                    if ($file['last_download']) {
-                                        echo date('M d, Y', strtotime($file['last_download']));
-                                    } else {
-                                        echo 'Never downloaded';
-                                    }
-                                    ?>
-                                </td>
                                 <td class="py-2 px-4">
                                     <a href="download.php?code=<?php echo urlencode($file['code']); ?>" class="text-blue-500 hover:text-blue-700 mr-2" title="Download">
                                         <i class="fas fa-download"></i>
