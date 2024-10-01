@@ -40,9 +40,9 @@ $showDownloadSection = !empty($downloadLink);
 </header>
 
     <main class="container mx-auto mt-8 p-4 flex-grow">
-        <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md md:p-12 lg:p-16 xl:p-20">
             <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Upload and Share Files</h2>
-
+    
             <!-- File upload form -->
             <form id="uploadForm" enctype="multipart/form-data" class="mb-8">
                 <div class="mb-4">
@@ -56,16 +56,16 @@ $showDownloadSection = !empty($downloadLink);
                     </div>
                 </div>
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <button type="button" onclick="uploadFile()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
+                    <button type="button" onclick="uploadFile()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out md:py-4 md:px-6 lg:py-5 lg:px-8 xl:py-6 xl:px-10">
                         <i class="fas fa-upload mr-2"></i> Upload File
                     </button>
                 <?php else: ?>
-                    <a href="login.php" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out inline-block text-center">
+                    <a href="login.php" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out inline-block text-center md:py-4 md:px-6 lg:py-5 lg:px-8 xl:py-6 xl:px-10">
                         <i class="fas fa-sign-in-alt mr-2"></i> Login to Upload
                     </a>
                 <?php endif; ?>
             </form>
-
+    
             <!-- Progress bar (hidden by default) -->
             <div id="progressContainer" class="hidden mb-4">
                 <div class="w-full bg-gray-200 rounded-full h-4">
@@ -73,16 +73,16 @@ $showDownloadSection = !empty($downloadLink);
                 </div>
                 <p id="progressText" class="text-sm text-gray-600 mt-2 text-center">0%</p>
             </div>
-
+    
             <!-- Download section -->
-            <div id="downloadSection" class="<?php echo $showDownloadSection ? '' : 'hidden'; ?> mt-8 bg-gray-100 p-6 rounded-lg">
+            <div id="downloadSection" class="<?php echo $showDownloadSection ? '' : 'hidden'; ?> mt-8 bg-gray-100 p-6 rounded-lg md:p-8 lg:p-10 xl:p-12">
                 <h3 class="text-xl font-semibold mb-4 text-gray-800">Download Link</h3>
                 <div class="flex items-center">
-                    <input type="text" id="downloadLink" value="<?php echo htmlspecialchars($downloadLink); ?>" readonly class="flex-grow p-3 border rounded-l-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button onclick="copyToClipboard()" class="bg-blue-500 text-white px-4 py-3 hover:bg-blue-600 transition duration-300 ease-in-out" aria-label="Copy download link">
+                    <input type="text" id="downloadLink" value="<?php echo htmlspecialchars($downloadLink); ?>" readonly class="flex-grow p-3 border rounded-l-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 md:p-4 lg:p-5 xl:p-6">
+                    <button onclick="copyToClipboard()" class="bg-blue-500 text-white px-4 py-3 hover:bg-blue-600 transition duration-300 ease-in-out md:px-6 md:py-4 lg:px-8 lg:py-5 xl:px-10 xl:py-6" aria-label="Copy download link">
                         <i class="fas fa-copy"></i>
                     </button>
-                    <button onclick="viewDownloadLink()" class="bg-green-500 text-white px-4 py-3 rounded-r-lg hover:bg-green-600 transition duration-300 ease-in-out" aria-label="View download link">
+                    <button onclick="viewDownloadLink()" class="bg-green-500 text-white px-4 py-3 rounded-r-lg hover:bg-green-600 transition duration-300 ease-in-out md:px-6 md:py-4 lg:px-8 lg:py-5 xl:px-10 xl:py-6" aria-label="View download link">
                         <i class="fas fa-external-link-alt"></i>
                     </button>
                 </div>
