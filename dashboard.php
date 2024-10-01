@@ -46,7 +46,7 @@ function formatSizeUnits($bytes) {
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <header class="bg-blue-600 text-white p-4 shadow-md">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold">FilesWith</h1>
+            <a href="/"><h1 class="text-2xl font-bold">FilesWith</h1></a>
             <nav>
                 <a href="index.php" class="text-white hover:text-blue-200 mr-4">
                     <i class="fas fa-home mr-2"></i>Home
