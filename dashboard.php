@@ -83,8 +83,8 @@ function formatSizeUnits($bytes) {
                             <tr>
                                 <th class="py-2 px-4 text-left">File Name</th>
                                 <th class="py-2 px-4 text-left">File Size</th>
-                                <th class="py-2 px-4 text-left">Upload Date</th>
-                                <th class="py-2 px-4 text-left">Download Count</th>
+                                <th class="py-2 px-4 text-left">Date</th>
+                                <th class="py-2 px-4 text-left">Downloads</th>
                                 <th class="py-2 px-4 text-left">Actions</th>
                             </tr>
                         </thead>
