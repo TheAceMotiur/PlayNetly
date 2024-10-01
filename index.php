@@ -21,7 +21,7 @@ $showDownloadSection = !empty($downloadLink);
 <body class="bg-gray-100 min-h-screen flex flex-col">
 <header class="bg-blue-600 text-white p-4">
     <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold">FilesWith</h1>
+    <a href="/"><h1 class="text-2xl font-bold">FilesWith</h1></a>
         <nav>
             <?php if (isset($_SESSION['user_id'])): ?>
                 <a href="dashboard.php" class="text-white hover:text-blue-200 mr-4">
