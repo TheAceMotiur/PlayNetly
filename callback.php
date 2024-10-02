@@ -18,6 +18,14 @@ if (isset($_GET['auth_key'])) {
         $_SESSION['user_name'] = $user_info['user_info']['user_name'];
         $_SESSION['user_email'] = $user_info['user_info']['user_email'];
 
+        // Set cookie expiration time (e.g., 30 days)
+        $cookieExpirationTime = 30 * 24 * 60 * 60;
+
+        // Set cookie variables
+        setcookie('user_id', $user_info['user_info']['user_id'], time() + $cookieExpirationTime, '/');
+        setcookie('user_name', $user_info['user_info']['user_name'], time() + $cookieExpirationTime, '/');
+        setcookie('user_email', $user_info['user_info']['user_email'], time() + $cookieExpirationTime, '/');
+
         $user_id = $user_info['user_info']['user_id'];
         $user_name = $user_info['user_info']['user_name'];
         $user_email = $user_info['user_info']['user_email'];
