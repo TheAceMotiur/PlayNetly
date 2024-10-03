@@ -3,6 +3,5 @@ php_value upload_max_filesize 1000M
 php_value memory_limit 1280M
 php_value max_execution_time 300
 php_value max_input_time 300
-<If "%{HTTP:Upgrade-Insecure-Requests} != '1' && %{REQUEST_URI} =~ m#^/functions/upload\.php#">
-    Protocols h2c http/1.1
-</If>
+RewriteEngine On
+RewriteRule ^download/(.+)$ download.php?file=$1 [L,QSA]
