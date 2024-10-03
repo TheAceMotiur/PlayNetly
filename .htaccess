@@ -4,4 +4,4 @@ php_value memory_limit 1280M
 php_value max_execution_time 300
 php_value max_input_time 300
 RewriteEngine On
-RewriteRule ^get/(.+)$ download.php?file=$1 [L,QSA]
+RewriteRule ^download/(.+)$ get.php?file=$1 [L,QSA]
