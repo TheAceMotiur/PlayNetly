@@ -2,21 +2,37 @@
 require_once 'config.php';
 error_reporting(0);
 
-// Retrieve the 10-letter text code from the URL
-$code = $_GET['code'];
+// Get the file name from the URL
+$file = isset($_GET['file']) ? $_GET['file'] : '';
 
-// Query the database to get the file ID based on the code
-$stmt = $conn->prepare("SELECT * FROM files WHERE code = ?");
-$stmt->bind_param("s", $code);
+// Extract the file extension
+$file_extension = pathinfo($file, PATHINFO_EXTENSION);
+
+// Query the database to get the file details based on the file name
+$stmt = $conn->prepare("SELECT * FROM files WHERE file_name = ?");
+$stmt->bind_param("s", $file);
 $stmt->execute();
 $result = $stmt->get_result();
-$file = $result->fetch_assoc();
+$file_info = $result->fetch_assoc();
 
-if ($file) {
-    $fileName = $file['file_name'];
-    $fileId = $file['id'];
-    $fileSize = $file['file_size'];
-    $downloadCount = $file['download_count'];
+if ($file_info) {
+    $fileName = $file_info['file_name'];
+    $fileId = $file_info['id'];
+    $fileSize = $file_info['file_size'];
+    $downloadCount = $file_info['download_count'];
+    
+    // Increment download count
+    $stmt = $conn->prepare("UPDATE files SET download_count = download_count + 1 WHERE id = ?");
+    $stmt->bind_param("i", $fileId);
+    $stmt->execute();
+
+    // Set headers for download
+    header("Content-Type: application/octet-stream");
+    header("Content-Transfer-Encoding: Binary");
+    header("Content-disposition: attachment; filename=\"" . $fileName . "\"");
+
+    // Output file content
+    readfile("uploads/" . $fileName);
 } else {
     echo "File not found.";
     exit();
@@ -250,7 +266,7 @@ function formatSizeUnits($bytes) {
                         </div>
                     </div>
                 </div>
-                <a href="download.php?code=<?php echo urlencode($code); ?>&file_id=<?php echo urlencode($fileId); ?>" 
+                <a href="download/<?php echo urlencode($file['file_name']); ?>" 
                    class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg inline-flex items-center transition duration-300">
                     <i class="fas fa-download mr-2"></i>
                     Download File
