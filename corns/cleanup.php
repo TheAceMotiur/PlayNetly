@@ -6,7 +6,7 @@ $config = [
     'db_user' => 'fileswith_com',
     'db_password' => 'AmiMotiur27@',
     'db_name' => 'fileswith_com',
-    'directory' => 'temp_downloads'
+    'directory' => 'uploads'
 ];
 
 // Directory to clean up
@@ -19,7 +19,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Remove files from temp_downloads directory
+// Remove files from uploads directory
 $files = glob("$directory/*");
 $currentTime = time();
 foreach ($files as $file) {

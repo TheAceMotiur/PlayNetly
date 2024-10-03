@@ -35,10 +35,10 @@ if (isset($_GET['file_id'])) {
 
     if ($file) {
         $fileName = basename($file['file_name']); // Prevent path traversal
-        $filePath = "temp_downloads/$fileName";
+        $filePath = "uploads/$fileName";
         $needToDownload = true;
 
-        // Check if the file exists in temp_downloads and is less than 7 days old
+        // Check if the file exists in uploads and is less than 7 days old
         if (file_exists($filePath)) {
             $fileAge = time() - filemtime($filePath);
             if ($fileAge < 7 * 24 * 60 * 60) { // 7 days in seconds

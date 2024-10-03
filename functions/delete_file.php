@@ -33,8 +33,8 @@ if ($file) {
     $response = curl_exec($ch);
     curl_close($ch);
 
-    // Delete from temp_downloads folder
-    $tempFilePath = "../temp_downloads/$fileName";
+    // Delete from uploads folder
+    $tempFilePath = "../uploads/$fileName";
     if (file_exists($tempFilePath)) {
         unlink($tempFilePath);
     }
