@@ -65,7 +65,7 @@ function uploadToDropbox($filePath, $fileName, $fileSize) {
     $domain = $_SERVER['HTTP_HOST'];
 
     // Generate download link
-    $downloadLink = "https://$domain/download/$fileName";
+    $downloadLink = "https://$domain/download.php?code=$uniqueCode";
     if (!filter_var($downloadLink, FILTER_VALIDATE_URL)) {
         throw new Exception('Invalid download link generated.');
     }
