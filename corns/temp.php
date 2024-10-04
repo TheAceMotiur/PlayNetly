@@ -8,7 +8,7 @@ $password = "AmiMotiur27@";
 $dbname = "fileswith_com";
 
 // Configuration
-$tempFolder = 'uploads'; // Path to your temporary downloads folder
+$tempFolder = 'temp_downloads'; // Path to your temporary downloads folder
 
 // Connect to the database
 $conn = new mysqli($host, $username, $password, $dbname);

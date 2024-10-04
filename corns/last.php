@@ -41,8 +41,8 @@ while ($file = $result->fetch_assoc()) {
         continue;
     }
 
-    // Remove file from uploads directory
-    $tempFilePath = "../uploads/$fileName";
+    // Remove file from temp_downloads directory
+    $tempFilePath = "../temp_downloads/$fileName";
     if (file_exists($tempFilePath)) {
         unlink($tempFilePath);
     }
