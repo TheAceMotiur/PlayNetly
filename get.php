@@ -32,7 +32,7 @@ if ($file_info) {
     header("Content-disposition: attachment; filename=\"" . $fileName . "\"");
 
     // Output file content
-    readfile("uploads/" . $fileName);
+    readfile("temp_downloads/" . $fileName);
 } else {
     echo "File not found.";
     exit();
