@@ -18,7 +18,7 @@ function removeFileFromDropbox($accessToken, $fileName) {
     return json_decode($response, true);
 }
 
-$xMinutes = 120; // Set the number of minutes after which files should be removed
+$xMinutes = 262800; // Set the number of minutes after which files should be removed
 $expirationTime = date('Y-m-d H:i:s', strtotime("-$xMinutes minutes"));
 
 $query = "SELECT * FROM files WHERE last_download < '$expirationTime' OR last_download IS NULL";
