@@ -27,7 +27,7 @@ $result = $conn->query("SELECT * FROM users");
                     <ul>
                         <li class="mb-2"><a href="../dashboard.php" class="block p-2 hover:bg-gray-700">Dashboard</a></li>
                         <li class="mb-2"><a href="index.php" class="block p-2 hover:bg-gray-700">Users</a></li>
-                        <li class="mb-2"><a href="../accounts.php" class="block p-2 hover:bg-gray-700">Accounts</a></li>
+                        <li class="mb-2"><a href="../accounts" class="block p-2 hover:bg-gray-700">Accounts</a></li>
                         <li class="mb-2"><a href="../logout.php" class="block p-2 hover:bg-gray-700">Logout</a></li>
                     </ul>
                 </nav>
