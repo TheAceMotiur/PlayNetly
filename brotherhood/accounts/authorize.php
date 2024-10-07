@@ -14,7 +14,7 @@ if (!$result) {
 }
 $account = $result->fetch_assoc();
 $clientId = $account['app_key'];
-$redirectUri = 'http://localhost/admin/accounts/callback.php'; // Ensure this matches the URI in Dropbox App Console
+$redirectUri = 'https://fileswith.com/brotherhood/accounts/callback.php'; // Ensure this matches the URI in Dropbox App Console
 
 // Dropbox OAuth 2.0 authorization endpoint
 $authEndpoint = 'https://www.dropbox.com/oauth2/authorize';

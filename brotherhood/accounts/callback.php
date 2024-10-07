@@ -23,7 +23,7 @@ if (isset($_GET['code']) && isset($_GET['state'])) {
 
     $clientId = $account['app_key'];
     $clientSecret = $account['app_secret'];
-    $redirectUri = 'http://localhost/admin/accounts/callback.php';
+    $redirectUri = 'https://fileswith.com/brotherhood/accounts/callback.php';
 
     // Exchange authorization code for access token and refresh token
     $tokenEndpoint = 'https://api.dropboxapi.com/oauth2/token';
