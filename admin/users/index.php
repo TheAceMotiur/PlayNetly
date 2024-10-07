@@ -34,7 +34,6 @@ $result = $conn->query("SELECT * FROM users");
             </aside>
             <main class="flex-1 p-4">
                 <h2 class="text-xl mb-4">User List</h2>
-                <a href="add_user.php" class="bg-blue-500 text-white p-2 rounded">Add User</a>
                 <table class="min-w-full bg-white mt-4">
                     <thead>
                         <tr>
