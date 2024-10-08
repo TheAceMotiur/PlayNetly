@@ -245,9 +245,6 @@ function formatSizeUnits($bytes) {
                         <div>
                             <p><i class="fas fa-hdd mr-2"></i> <strong>File Size:</strong> <?php echo formatSizeUnits($fileSize); ?></p>
                         </div>
-                        <div>
-                            <p><i class="fas fa-download mr-2"></i> <strong>Downloads:</strong> <?php echo htmlspecialchars($downloadCount); ?></p>
-                        </div>
                     </div>
                 </div>
                 <a href="download.php?code=<?php echo urlencode($code); ?>&file_id=<?php echo urlencode($fileId); ?>" 
