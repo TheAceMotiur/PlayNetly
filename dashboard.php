@@ -97,9 +97,7 @@ function formatSizeUnits($bytes) {
                                 <a href="download.php?code=<?php echo urlencode($file['code']); ?>" class="text-blue-500 hover:text-blue-700 mr-2" title="Download">
                                     <i class="fas fa-download"></i>
                                 </a>
-                                <a href="#" class="text-green-500 hover:text-green-700 mr-2" title="Share">
-                                    <i class="fas fa-share-alt"></i>
-                                </a>
+                                
                                 <a href="functions/delete_file.php?id=<?php echo urlencode($file['id']); ?>" class="text-red-500 hover:text-red-700" onclick="return confirm('Are you sure you want to delete this file?');" title="Delete">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
