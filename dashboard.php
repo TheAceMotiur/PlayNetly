@@ -84,7 +84,6 @@ function formatSizeUnits($bytes) {
                             <th class="py-2 px-2 sm:px-4 text-left text-xs sm:text-sm">File Name</th>
                             <th class="py-2 px-2 sm:px-4 text-left text-xs sm:text-sm">File Size</th>
                             <th class="py-2 px-2 sm:px-4 text-left text-xs sm:text-sm">Date</th>
-                            <th class="py-2 px-2 sm:px-4 text-left text-xs sm:text-sm">Downloads</th>
                             <th class="py-2 px-2 sm:px-4 text-left text-xs sm:text-sm">Actions</th>
                         </tr>
                     </thead>
@@ -94,7 +93,6 @@ function formatSizeUnits($bytes) {
                             <td class="py-2 px-2 sm:px-4 text-xs sm:text-sm"><?php echo htmlspecialchars($file['file_name']); ?></td>
                             <td class="py-2 px-2 sm:px-4 text-xs sm:text-sm"><?php echo formatSizeUnits($file['file_size']); ?></td>
                             <td class="py-2 px-2 sm:px-4 text-xs sm:text-sm"><?php echo date('M d, Y', strtotime($file['upload_time'])); ?></td>
-                            <td class="py-2 px-2 sm:px-4 text-xs sm:text-sm"><?php echo htmlspecialchars($file['download_count']); ?></td>
                             <td class="py-2 px-2 sm:px-4 text-xs sm:text-sm">
                                 <a href="download.php?code=<?php echo urlencode($file['code']); ?>" class="text-blue-500 hover:text-blue-700 mr-2" title="Download">
                                     <i class="fas fa-download"></i>
